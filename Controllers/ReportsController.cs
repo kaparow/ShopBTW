@@ -8,73 +8,62 @@ namespace ShopBTW.Controllers;
 [Route("api/[controller]")]
 public class ReportsController(AppDbContext db) : ControllerBase
 {
-    // 1) Заказы с ФИО клиента и суммой (Orders + Customers + Items)
+    // 1) Заказы с именем клиента и суммой
     // GET: api/reports/orders-with-customers
     [HttpGet("orders-with-customers")]
     public async Task<IActionResult> OrdersWithCustomers(CancellationToken ct)
     {
         var data = await db.Orders
-            .Include(o => o.Customer)
-            .Include(o => o.Items)
+            .AsNoTracking()
             .Select(o => new
             {
                 o.Id,
-                Customer = o.Customer != null ? $"{o.Customer.FirstName} {o.Customer.LastName}" : "—",
-                CreatedAt = o.CreatedAt,
-                ItemsCount = o.Items.Count,
-                Total = o.Items.Sum(i => i.Price * i.Quantity)
-            })
-            .ToListAsync(ct);
-
-        return Ok(data);
-    }
-
-    // 2) Заказы конкретного клиента (Where + Select)
-    // GET: api/reports/customer-orders/1
-    [HttpGet("customer-orders/{customerId:int}")]
-    public async Task<IActionResult> CustomerOrders(int customerId, CancellationToken ct)
-    {
-        var data = await db.Orders
-            .Where(o => o.CustomerId == customerId)
-            .Select(o => new
-            {
-                o.Id,
+                Customer = o.Customer != null ? (o.Customer.FirstName + " " + o.Customer.LastName) : "",
                 o.CreatedAt,
                 Total = o.Items.Sum(i => i.Price * i.Quantity)
             })
+            .OrderByDescending(x => x.Id)
             .ToListAsync(ct);
 
         return Ok(data);
     }
 
-    // 3) Товары с малым остатком (Where + Select)
-    // GET: api/reports/low-stock?limit=5
-    [HttpGet("low-stock")]
-    public async Task<IActionResult> LowStock([FromQuery] int limit = 5, CancellationToken ct = default)
-    {
-        var data = await db.Products
-            .Where(p => p.Stock < limit)
-            .Select(p => new { p.Id, p.Name, p.Stock })
-            .ToListAsync(ct);
-
-        return Ok(data);
-    }
-
-    // 4) ТОП товаров по количеству в заказах (GroupBy)
+    // 2) Топ-товары по количеству (сумма quantity по всем заказам)
     // GET: api/reports/top-products
     [HttpGet("top-products")]
     public async Task<IActionResult> TopProducts(CancellationToken ct)
     {
         var data = await db.OrderItems
+            .AsNoTracking()
             .GroupBy(i => new { i.ProductId, i.ProductName })
             .Select(g => new
             {
                 g.Key.ProductId,
                 g.Key.ProductName,
-                TotalQuantity = g.Sum(x => x.Quantity),
-                OrdersCount = g.Count()
+                Quantity = g.Sum(x => x.Quantity),
+                Revenue = g.Sum(x => x.Price * x.Quantity)
             })
-            .OrderByDescending(x => x.TotalQuantity)
+            .OrderByDescending(x => x.Quantity)
+            .ToListAsync(ct);
+
+        return Ok(data);
+    }
+
+    // 3) Сводка по клиентам: кол-во заказов и общая сумма
+    // GET: api/reports/customer-summary
+    [HttpGet("customer-summary")]
+    public async Task<IActionResult> CustomerSummary(CancellationToken ct)
+    {
+        var data = await db.Customers
+            .AsNoTracking()
+            .Select(c => new
+            {
+                c.Id,
+                Name = c.FirstName + " " + c.LastName,
+                OrdersCount = c.Orders.Count,
+                Total = c.Orders.SelectMany(o => o.Items).Sum(i => i.Price * i.Quantity)
+            })
+            .OrderByDescending(x => x.Total)
             .ToListAsync(ct);
 
         return Ok(data);

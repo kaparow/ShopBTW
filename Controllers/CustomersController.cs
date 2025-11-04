@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopBTW.Data;
-using ShopBTW.Models;
-using ShopBTW.Data;
+using ShopBTW.DTOs;
 using ShopBTW.Models;
 
 namespace ShopBTW.Controllers;
@@ -11,57 +10,98 @@ namespace ShopBTW.Controllers;
 [Route("api/[controller]")]
 public class CustomersController(AppDbContext db) : ControllerBase
 {
+    // GET: api/customers
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Customer>>> GetAll(CancellationToken ct)
+    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAll(CancellationToken ct)
     {
-        var customers = await db.Customers
-            .Include(c => c.Orders)
-            .ThenInclude(o => o.Items)
+        var data = await db.Customers
             .AsNoTracking()
+            .Select(c => new CustomerDto(
+                c.Id,
+                c.FirstName + " " + c.LastName,
+                c.Email,
+                c.Orders.Select(o => new OrderSummaryDto(
+                    o.Id,
+                    o.CreatedAt,
+                    o.Items.Count,
+                    o.Items.Sum(i => i.Price * i.Quantity)
+                ))
+            ))
             .ToListAsync(ct);
 
-        return customers;
+        return data;
     }
 
-
+    // GET: api/customers/5
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Customer>> Get(int id, CancellationToken ct)
+    public async Task<ActionResult<CustomerDto>> Get(int id, CancellationToken ct)
     {
-        var customer = await db.Customers
-            .Include(c => c.Orders)
-            .ThenInclude(o => o.Items)
+        var dto = await db.Customers
+            .Where(c => c.Id == id)
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == id, ct);
+            .Select(c => new CustomerDto(
+                c.Id,
+                c.FirstName + " " + c.LastName,
+                c.Email,
+                c.Orders.Select(o => new OrderSummaryDto(
+                    o.Id,
+                    o.CreatedAt,
+                    o.Items.Count,
+                    o.Items.Sum(i => i.Price * i.Quantity)
+                ))
+            ))
+            .FirstOrDefaultAsync(ct);
 
-        return customer is null ? NotFound() : customer;
+        return dto is null ? NotFound() : dto;
     }
 
+    // POST: api/customers
     [HttpPost]
-    public async Task<ActionResult<Customer>> Create(Customer model, CancellationToken ct)
+    public async Task<ActionResult<CustomerDto>> Create(
+        CustomerCreateDto dtoIn, CancellationToken ct)
     {
+        var model = new Customer
+        {
+            FirstName = dtoIn.FirstName,
+            LastName = dtoIn.LastName,
+            Email = dtoIn.Email
+        };
+
         db.Customers.Add(model);
         await db.SaveChangesAsync(ct);
-        return CreatedAtAction(nameof(Get), new { id = model.Id }, model);
-    }   
 
+        var dtoOut = new CustomerDto(
+            model.Id,
+            model.FirstName + " " + model.LastName,
+            model.Email,
+            Enumerable.Empty<OrderSummaryDto>());
+
+        return CreatedAtAction(nameof(Get), new { id = model.Id }, dtoOut);
+    }
+
+    // PUT: api/customers/5
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, Customer model, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, CustomerCreateDto dto, CancellationToken ct)
     {
-        if (id != model.Id) return BadRequest("Id mismatch");
-        var exists = await db.Customers.AnyAsync(c => c.Id == id, ct);
-        if (!exists) return NotFound();
+        var model = await db.Customers.FirstOrDefaultAsync(c => c.Id == id, ct);
+        if (model is null) return NotFound();
 
-        db.Entry(model).State = EntityState.Modified;
+        model.FirstName = dto.FirstName;
+        model.LastName = dto.LastName;
+        model.Email = dto.Email;
+
         await db.SaveChangesAsync(ct);
         return NoContent();
     }
 
+    // DELETE: api/customers/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
-        var entity = await db.Customers.FindAsync([id], ct);
-        if (entity is null) return NotFound();
-        db.Customers.Remove(entity);
+        var model = await db.Customers.FindAsync([id], ct);
+        if (model is null) return NotFound();
+
+        db.Customers.Remove(model);
         await db.SaveChangesAsync(ct);
         return NoContent();
     }
