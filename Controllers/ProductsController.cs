@@ -13,18 +13,18 @@ public class ProductsController(AppDbContext db) : ControllerBase
     // GET: api/products
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(CancellationToken ct)
-        => await db.Products
-            .AsNoTracking()
-            .Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock))
+        => await db.Products.AsNoTracking()
+            .Select(p => new ProductDto(
+                p.Id, p.Name, p.PartType, p.Price, p.Stock))
             .ToListAsync(ct);
 
     // GET: api/products/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProductDto>> Get(int id, CancellationToken ct)
     {
-        var dto = await db.Products
-            .Where(p => p.Id == id)
-            .Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock))
+        var dto = await db.Products.Where(p => p.Id == id)
+            .Select(p => new ProductDto(
+                p.Id, p.Name, p.PartType, p.Price, p.Stock))
             .AsNoTracking()
             .FirstOrDefaultAsync(ct);
 
@@ -35,10 +35,15 @@ public class ProductsController(AppDbContext db) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductDto>> Create(Product model, CancellationToken ct)
     {
+        if (!IsAllowedPart(model.PartType))
+            return BadRequest("Only robot parts are allowed (Tracks, Motor).");
+
         db.Products.Add(model);
         await db.SaveChangesAsync(ct);
 
-        var dto = new ProductDto(model.Id, model.Name, model.Price, model.Stock);
+        var dto = new ProductDto(
+            model.Id, model.Name, model.PartType, model.Price, model.Stock);
+
         return CreatedAtAction(nameof(Get), new { id = model.Id }, dto);
     }
 
@@ -47,6 +52,8 @@ public class ProductsController(AppDbContext db) : ControllerBase
     public async Task<IActionResult> Update(int id, Product model, CancellationToken ct)
     {
         if (id != model.Id) return BadRequest("Id mismatch");
+        if (!IsAllowedPart(model.PartType))
+            return BadRequest("Only robot parts are allowed (Tracks, Motor).");
 
         var exists = await db.Products.AnyAsync(p => p.Id == id, ct);
         if (!exists) return NotFound();
@@ -67,4 +74,7 @@ public class ProductsController(AppDbContext db) : ControllerBase
         await db.SaveChangesAsync(ct);
         return NoContent();
     }
+
+    private static bool IsAllowedPart(RobotPartType t)
+        => t is RobotPartType.Tracks or RobotPartType.Motor or RobotPartType.Battery or RobotPartType.Wheel or RobotPartType.Controller;
 }

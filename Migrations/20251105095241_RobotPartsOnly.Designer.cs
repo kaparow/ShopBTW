@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopBTW.Data;
 
@@ -11,9 +12,11 @@ using ShopBTW.Data;
 namespace ShopBTW.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105095241_RobotPartsOnly")]
+    partial class RobotPartsOnly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,62 +24,6 @@ namespace ShopBTW.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ShopBTW.Models.Cart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsCheckedOut")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId", "IsCheckedOut")
-                        .IsUnique()
-                        .HasFilter("[IsCheckedOut] = 0");
-
-                    b.ToTable("Carts");
-                });
-
-            modelBuilder.Entity("ShopBTW.Models.CartItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("CartItems");
-                });
 
             modelBuilder.Entity("ShopBTW.Models.Customer", b =>
                 {
@@ -95,10 +42,6 @@ namespace ShopBTW.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -188,36 +131,6 @@ namespace ShopBTW.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ShopBTW.Models.Cart", b =>
-                {
-                    b.HasOne("ShopBTW.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("ShopBTW.Models.CartItem", b =>
-                {
-                    b.HasOne("ShopBTW.Models.Cart", "Cart")
-                        .WithMany("Items")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShopBTW.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("ShopBTW.Models.Order", b =>
                 {
                     b.HasOne("ShopBTW.Models.Customer", "Customer")
@@ -238,11 +151,6 @@ namespace ShopBTW.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("ShopBTW.Models.Cart", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ShopBTW.Models.Customer", b =>

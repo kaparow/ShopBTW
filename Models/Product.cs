@@ -1,36 +1,24 @@
-﻿namespace ShopBTW.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopBTW.Models;
+
+public class Product
 {
-    public class Product
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        // Название товара
-        public string Name { get; set; } = string.Empty;
+    [Required, MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
 
-        // Базовая цена
-        public decimal Price { get; set; }
+    /// <summary>Тип запчасти для робота (гусеницы, двигатель и т.п.)</summary>
+    [Required]
+    public RobotPartType PartType { get; set; }
 
-        // Остаток на складе
-        public int Stock { get; set; }
+    /// <summary>Цена — денежный тип, зададим точность в OnModelCreating</summary>
+    public decimal Price { get; set; }
 
-        // ===== БИЗНЕС-ЛОГИКА =====
+    /// <summary>Остаток на складе</summary>
+    public int Stock { get; set; }
 
-        // Списать со склада
-        public bool Reserve(int quantity)
-        {
-            if (quantity <= 0) return false;
-            if (Stock < quantity) return false;
+    // Можно добавить ещё характеристик.
 
-            Stock -= quantity;
-            return true;
-        }
-
-        // Применить скидку в %
-        public void ApplyDiscount(decimal percent)
-        {
-            if (percent <= 0) return;
-            if (percent > 90) percent = 90;
-            Price = Price - Price * (percent / 100m);
-        }
-    }
 }

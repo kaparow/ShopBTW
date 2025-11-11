@@ -6,3 +6,4 @@ public record CustomerDto(
     string Email,
     IEnumerable<OrderSummaryDto> Orders
 );
+
