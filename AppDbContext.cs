@@ -21,31 +21,36 @@ namespace ShopBTW.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Денежные поля
             modelBuilder.Entity<Product>()
-            .Property(p => p.Price)
-            .HasPrecision(10, 2);
+                .Property(p => p.Price)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<CartItem>()
+                .Property(ci => ci.UnitPrice)
+                .HasPrecision(10, 2);
 
             modelBuilder.Entity<OrderItem>()
-                .Property(i => i.Price)
+                .Property(oi => oi.Price)
                 .HasPrecision(10, 2);
 
+            // Связи БЕЗ навигации Product на CartItem/OrderItem (вариант A)
             modelBuilder.Entity<CartItem>()
-                .Property(i => i.UnitPrice)
-                .HasPrecision(10, 2);
-
-            // одна активная корзина на клиента (в SQL Server работает)
-            modelBuilder.Entity<Cart>()
-                .HasIndex(c => new { c.CustomerId, c.IsCheckedOut })
-                .IsUnique()
-                .HasFilter("[IsCheckedOut] = 0");
-
-            // CartItem → Product без каскадного удаления продуктов
-            modelBuilder.Entity<CartItem>()
-                .HasOne(i => i.Product)
+                .HasOne<Product>()                      // нет свойства ci.Product
                 .WithMany()
-                .HasForeignKey(i => i.ProductId)
+                .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderItem>()
+                .HasOne<Order>(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne<Product>()                      // нет свойства oi.Product
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -66,7 +66,7 @@ public class AuthService
 
         var token = new JwtSecurityToken(
             issuer: jwt["Issuer"],
-            audience: jwt["Audience"],
+            audience: jwt["Audience"], 
             claims: claims,
             expires: expires,
             signingCredentials: creds);

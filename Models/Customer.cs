@@ -6,7 +6,7 @@
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public string Email { get; set; } = "";
-        public string PasswordHash { get; set; } = string.Empty; // добавили
+        public string PasswordHash { get; set; } = string.Empty;
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }
