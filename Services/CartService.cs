@@ -27,7 +27,6 @@ public class CartService
         return new CartDto(
             cart.Id,
             cart.CustomerId,
-            cart.IsCheckedOut,
             cart.Items.Sum(i => i.Quantity * i.UnitPrice),
             cart.Items.Select(i => new CartItemDto(
                 i.ProductId,
@@ -138,3 +137,4 @@ public class CartService
         return new CheckoutResultDto(order.Id, order.CreatedAt, total);
     }
 }
+
