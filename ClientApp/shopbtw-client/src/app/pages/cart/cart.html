@@ -1,0 +1,45 @@
+<div class="top">
+    <a routerLink="/">← Товары</a>
+    <button (click)="loadCart()" [disabled]="loading">Обновить</button>
+</div>
+
+<h2>Корзина</h2>
+
+<div *ngIf="loading">Загрузка...</div>
+<div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+<div *ngIf="!loading && cart">
+    <div *ngIf="cart.items.length === 0" class="empty">
+        Корзина пустая
+    </div>
+
+    <div *ngIf="cart.items.length > 0">
+        <div class="item" *ngFor="let it of cart.items">
+            <div class="name">{{ it.productName }}</div>
+            <div class="meta">
+                <span>Цена: {{ it.unitPrice }}</span>
+
+                <span class="qty">
+                    <button (click)="decrease(it.productId, it.quantity)" [disabled]="loading">−</button>
+                    <b>{{ it.quantity }}</b>
+                    <button (click)="increase(it.productId, it.quantity)" [disabled]="loading">+</button>
+                </span>
+
+                <span>Сумма: {{ it.lineTotal }}</span>
+
+                <button (click)="remove(it.productId)" [disabled]="loading">
+                    Удалить
+                </button>
+            </div>
+
+        </div>
+
+        <div class="total">
+            Итого: <b>{{ cart.total }}</b>
+        </div>
+
+        <button class="checkout" (click)="checkout()" [disabled]="loading || cart.items.length === 0">
+            Оформить заказ (Checkout)
+        </button>
+    </div>
+</div>

@@ -13,9 +13,20 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("ShopBTWClient", p => p
+        .WithOrigins("http://localhost:4200", "https://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
+});
+
 // JWT
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!));
+
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o =>
@@ -83,9 +94,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
 var app = builder.Build();
-
 // авто-миграция под LocalDB
 using (var scope = app.Services.CreateScope())
 {
@@ -99,6 +108,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
+
+app.UseCors("ShopBTWClient");
 app.UseHttpsRedirection();
 app.UseAuthentication();   // обязательно до UseAuthorization
 app.UseAuthorization();

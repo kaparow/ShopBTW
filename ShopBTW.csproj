@@ -30,4 +30,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ClientApp\shopbtw-client\src\app\core\interceptors\" />
+    <Folder Include="ClientApp\shopbtw-client\src\app\core\models\" />
+    <Folder Include="ClientApp\shopbtw-client\src\app\core\services\" />
+    <Folder Include="ClientApp\shopbtw-client\src\app\pages\" />
+  </ItemGroup>
+
 </Project>

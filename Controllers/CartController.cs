@@ -38,4 +38,18 @@ public class CartController : ControllerBase
         int customerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         return await _cartService.CheckoutAsync(customerId);
     }
+    [HttpPut("items")]
+    public async Task<ActionResult<CartDto>> UpdateItem(AddToCartDto dto)
+    {
+        int customerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return await _cartService.UpdateQuantityAsync(customerId, dto.ProductId, dto.Quantity);
+    }
+
+    [HttpDelete("items")]
+    public async Task<ActionResult<CartDto>> RemoveItem([FromQuery] int productId)
+    {
+        int customerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return await _cartService.RemoveItemAsync(customerId, productId);
+    }
+
 }
