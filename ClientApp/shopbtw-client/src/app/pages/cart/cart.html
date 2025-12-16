@@ -1,0 +1,92 @@
+<div class="cart-page">
+
+    <div class="cart-head">
+        <div>
+            <h2 class="cart-title">Корзина</h2>
+            <div class="cart-subtitle">Измени количество и оформи заказ.</div>
+        </div>
+    </div>
+
+    <!-- loading -->
+    <div class="state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <div>Загрузка корзины…</div>
+    </div>
+
+    <!-- error -->
+    <div class="state" *ngIf="!loading && error">
+        <div class="error-box">{{ error }}</div>
+        <button mat-raised-button color="primary" (click)="loadCart()">Повторить</button>
+    </div>
+
+    <!-- empty -->
+    <mat-card class="empty-card" *ngIf="!loading && !error && cart.items.length === 0">
+        <h3 class="empty-title">Корзина пустая</h3>
+        <div class="empty-text">Перейди в каталог и добавь товары.</div>
+        <div class="empty-actions">
+            <a mat-raised-button color="primary" routerLink="/products">В каталог</a>
+        </div>
+    </mat-card>
+
+    <!-- content -->
+    <div class="cart-grid" *ngIf="!loading && !error && cart.items.length > 0">
+
+        <div class="items">
+            <mat-card class="item" *ngFor="let it of cart.items">
+                <div class="item-row">
+                    <div class="item-name">{{ it.productName }}</div>
+
+                    <button mat-button color="warn" (click)="remove(it.productId)" [disabled]="loading">
+                        Удалить
+                    </button>
+                </div>
+
+                <div class="item-meta">
+                    <div class="meta">
+                        <div class="meta-label">Цена</div>
+                        <div class="meta-value">{{ it.unitPrice | number:'1.2-2' }} ₽</div>
+                    </div>
+
+                    <div class="meta">
+                        <div class="meta-label">Сумма</div>
+                        <div class="meta-value strong">{{ it.lineTotal | number:'1.2-2' }} ₽</div>
+                    </div>
+                </div>
+
+                <div class="qty">
+                    <button mat-stroked-button (click)="decrease(it.productId, it.quantity)"
+                        [disabled]="loading || it.quantity <= 1">
+                        −
+                    </button>
+
+                    <div class="qty-value">{{ it.quantity }}</div>
+
+                    <button mat-stroked-button (click)="increase(it.productId, it.quantity)" [disabled]="loading">
+                        +
+                    </button>
+
+                    <span class="qty-spacer"></span>
+                </div>
+            </mat-card>
+        </div>
+
+        <mat-card class="summary">
+            <div class="summary-title">Итого</div>
+
+            <div class="sum-row">
+                <span class="muted">Позиций</span>
+                <span>{{ cart.items.length }}</span>
+            </div>
+
+            <div class="sum-row total">
+                <span>Сумма</span>
+                <span>{{ cart.total | number:'1.2-2' }} ₽</span>
+            </div>
+
+            <button mat-raised-button color="primary" class="checkout" (click)="checkout()" [disabled]="loading">
+                Оформить заказ
+            </button>
+        </mat-card>
+
+    </div>
+</div>

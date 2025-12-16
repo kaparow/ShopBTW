@@ -1,0 +1,25 @@
+<mat-toolbar color="primary" class="toolbar">
+  <span class="brand" routerLink="/">ShopBTW</span>
+
+  <span class="spacer"></span>
+
+  <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Главная</a>
+  <a mat-button routerLink="/products" routerLinkActive="active">Каталог</a>
+  <a mat-button routerLink="/cart" routerLinkActive="active">Корзина</a>
+  <a mat-button routerLink="/orders" routerLinkActive="active">Заказы</a>
+  <ng-container *ngIf="isLoggedIn; else guest">
+    <button mat-stroked-button (click)="logout()">Выйти</button>
+  </ng-container>
+
+  <ng-template #guest>
+    <a mat-stroked-button routerLink="/login">Вход</a>
+  </ng-template>
+</mat-toolbar>
+
+<div class="page">
+  <router-outlet></router-outlet>
+</div>
+
+<footer class="footer">
+  © {{ year }} ShopBTW
+</footer>

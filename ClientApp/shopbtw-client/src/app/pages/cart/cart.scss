@@ -1,0 +1,175 @@
+.cart-page {
+    display: grid;
+    gap: 14px;
+}
+
+.cart-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cart-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.cart-subtitle {
+    margin-top: 6px;
+    opacity: 0.75;
+}
+
+.state {
+    display: grid;
+    place-items: center;
+    gap: 12px;
+    padding: 18px 0;
+}
+
+.error-box {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 0, 0, 0.25);
+    background: rgba(255, 0, 0, 0.08);
+    max-width: 520px;
+    text-align: center;
+}
+
+.empty-card {
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.empty-title {
+    margin: 4px 0 0;
+    font-weight: 800;
+}
+
+.empty-text {
+    margin-top: 6px;
+    opacity: 0.75;
+}
+
+.empty-actions {
+    margin-top: 14px;
+}
+
+.cart-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 14px;
+    align-items: start;
+}
+
+.items {
+    display: grid;
+    gap: 12px;
+}
+
+.item {
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.item-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.item-name {
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.item-meta {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.meta-label {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.meta-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.strong {
+    font-weight: 900;
+}
+
+.qty {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.qty-value {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+.qty-spacer {
+    flex: 1 1 auto;
+}
+
+.summary {
+    border-radius: 16px;
+    padding: 12px;
+    position: sticky;
+    top: 78px; // чтобы не залезало под toolbar
+}
+
+.summary-title {
+    font-weight: 900;
+    font-size: 18px;
+    margin: 4px 4px 12px;
+}
+
+.sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 4px;
+}
+
+.muted {
+    opacity: 0.75;
+}
+
+.total {
+    border-top: 1px solid rgba(0, 0, 0, 0.10);
+    margin-top: 6px;
+    padding-top: 12px;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.checkout {
+    width: calc(100% - 8px);
+    margin: 12px 4px 4px;
+    height: 44px;
+    border-radius: 12px;
+}
+
+@media (max-width: 980px) {
+    .cart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        position: static;
+    }
+}

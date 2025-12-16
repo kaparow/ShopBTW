@@ -1,0 +1,35 @@
+.hero {
+  border-radius: 16px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(63,81,181,.12), rgba(233,30,99,.10));
+}
+
+.hero__text {
+  max-width: 900px;
+}
+
+.hero__actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero__chips {
+  margin-top: 16px;
+}
+
+.cards {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  border-radius: 16px;
+}
+
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+}

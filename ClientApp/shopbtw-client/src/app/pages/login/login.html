@@ -1,0 +1,42 @@
+<div class="wrap">
+    <mat-card class="card">
+        <div class="head">
+            <h2>Вход</h2>
+            <p>Войди, чтобы добавлять товары в корзину и оформлять заказы.</p>
+        </div>
+
+        <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" autocomplete="email">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Пароль</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                    autocomplete="current-password">
+
+                <button mat-button type="button" matSuffix class="suffix" (click)="togglePassword()">
+                    {{ hidePassword ? 'Показать' : 'Скрыть' }}
+                </button>
+
+            </mat-form-field>
+
+            <div class="error" *ngIf="error">{{ error }}</div>
+
+            <button mat-raised-button color="primary" class="submit" type="submit" [disabled]="loading">
+                <ng-container *ngIf="!loading; else loadingTpl">Войти</ng-container>
+                <ng-template #loadingTpl>
+                    <span class="loading">
+                        <mat-spinner diameter="18"></mat-spinner>
+                        Входим...
+                    </span>
+                </ng-template>
+            </button>
+
+            <div class="links">
+                <a routerLink="/products">В каталог</a>
+            </div>
+        </form>
+    </mat-card>
+</div>

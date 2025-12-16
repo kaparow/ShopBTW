@@ -1,0 +1,62 @@
+.wrap {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 18px;
+  padding: 10px;
+}
+
+.head {
+  padding: 10px 10px 0;
+}
+
+.head h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.head p {
+  margin: 8px 0 0;
+  opacity: 0.75;
+}
+
+.form {
+  padding: 10px;
+  display: grid;
+  gap: 14px;
+}
+
+.suffix {
+  min-width: auto;
+  padding: 0 10px;
+}
+
+.error {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.18);
+}
+
+.submit {
+  height: 44px;
+  border-radius: 12px;
+}
+
+.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.links {
+  text-align: center;
+  opacity: 0.85;
+}

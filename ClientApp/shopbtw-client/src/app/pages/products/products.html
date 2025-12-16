@@ -1,0 +1,47 @@
+<div class="header">
+  <div>
+    <h2 class="title">Каталог</h2>
+    <p class="subtitle">Выбери товары и добавь в корзину.</p>
+  </div>
+
+  <button mat-stroked-button color="primary" (click)="loadProducts()">
+    Обновить
+  </button>
+</div>
+
+<div *ngIf="loading" class="center">
+  <mat-spinner></mat-spinner>
+  <p>Загрузка товаров…</p>
+</div>
+
+<div *ngIf="!loading && error" class="center">
+  <p class="error">{{ error }}</p>
+  <button mat-raised-button color="primary" (click)="loadProducts()">Повторить</button>
+</div>
+
+<div *ngIf="!loading && !error">
+  <div *ngIf="products.length === 0" class="empty">
+    <h3>Товаров пока нет</h3>
+    <p>Попробуй обновить список позже.</p>
+  </div>
+
+  <div class="grid" *ngIf="products.length > 0">
+    <mat-card class="card" *ngFor="let p of products; trackBy: trackById">
+      <div class="name">{{ p.name }}</div>
+
+      <div class="meta">
+        <span class="chip">Тип: {{ p.partType }}</span>
+      </div>
+
+      <div class="price">{{ p.price | number:'1.2-2' }} ₽</div>
+
+      <mat-card-actions class="actions">
+        <button mat-raised-button color="primary" (click)="addToCart(p.id)">
+          В корзину
+        </button>
+
+        <button mat-button disabled>Подробнее</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
