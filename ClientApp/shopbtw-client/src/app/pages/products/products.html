@@ -30,7 +30,7 @@
       <div class="name">{{ p.name }}</div>
 
       <div class="meta">
-        <span class="chip">Тип: {{ p.partType }}</span>
+        <span class="chip">Тип: {{ partTypeName(p.partType) }}</span>
       </div>
 
       <div class="price">{{ p.price | number:'1.2-2' }} ₽</div>

@@ -11,7 +11,8 @@
     <Content Remove="Data\**" />
     <EmbeddedResource Remove="Data\**" />
     <None Remove="Data\**" />
-  </ItemGroup>
+    <Compile Include="Data\SeedData.cs"/>
+  </ItemGroup>  
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />

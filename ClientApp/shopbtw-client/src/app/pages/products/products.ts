@@ -93,4 +93,17 @@ export class ProductsComponent implements OnInit {
   trackById(_: number, p: ProductDto): number {
     return p.id;
   }
+  partTypeName(partType: number): string {
+    const map: Record<number, string> = {
+      1: 'Гусеницы',
+      2: 'Двигатель',
+      3: 'Контроллер',
+      4: 'Аккумулятор',
+      5: 'Колесо',
+      6: 'Робот',
+    };
+
+    return map[partType] ?? `Тип ${partType}`;
+  }
+
 }

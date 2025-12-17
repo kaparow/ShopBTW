@@ -1,5 +1,14 @@
-import { CanActivateFn } from '@angular/router';
+export interface OrderItemDto {
+  productId: number;
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+}
 
-export const authGuard: CanActivateFn = (route, state) => {
-  return true;
-};
+export interface OrderDto {
+  id: number;
+  createdAt: string;
+  total: number;
+  items: OrderItemDto[];
+}

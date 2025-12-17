@@ -1,1 +1,46 @@
-<p>orders works!</p>
+<div class="head">
+    <div>
+        <h2 class="title">Заказы</h2>
+        <div class="subtitle">История оформленных заказов.</div>
+    </div>
+
+    <button mat-stroked-button color="primary" (click)="loadOrders()" [disabled]="loading">
+        Обновить
+    </button>
+</div>
+
+<div class="state" *ngIf="loading">
+    <mat-spinner diameter="36"></mat-spinner>
+    <div>Загрузка заказов…</div>
+</div>
+
+<div class="state" *ngIf="!loading && error">
+    <div class="error-box">{{ error }}</div>
+    <button mat-raised-button color="primary" (click)="loadOrders()">Повторить</button>
+</div>
+
+<mat-card class="empty" *ngIf="!loading && !error && orders.length === 0">
+    <h3>Заказов пока нет</h3>
+    <div class="muted">Оформи заказ в корзине — он появится здесь.</div>
+</mat-card>
+
+<div class="list" *ngIf="!loading && !error && orders.length > 0">
+    <mat-card class="order" *ngFor="let o of orders">
+        <div class="order-top">
+            <div>
+                <div class="order-id">Заказ #{{ o.id }}</div>
+                <div class="muted">{{ o.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
+            </div>
+            <div class="order-total">{{ o.total | number:'1.2-2' }} ₽</div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="items">
+            <div class="item" *ngFor="let it of o.items">
+                <div class="name">{{ it.productName }}</div>
+                <div class="muted">× {{ it.quantity }}</div>
+            </div>
+        </div>
+    </mat-card>
+</div>
