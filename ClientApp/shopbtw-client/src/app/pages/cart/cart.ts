@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { CartDto } from '../../core/models/cart.models';
 import { finalize } from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class CartComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private cartApi: CartService, private cdr: ChangeDetectorRef) { }
+  constructor(private cartApi: CartService, private cdr: ChangeDetectorRef, private router: Router ) { }
 
   ngOnInit() {
     console.log('CartComponent init called');
