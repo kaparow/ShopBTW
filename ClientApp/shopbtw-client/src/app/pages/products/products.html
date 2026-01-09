@@ -5,6 +5,7 @@
   </div>
 </div>
 
+
 <div class="view-switch">
   <button mat-button [class.active]="viewMode==='cards'" (click)="setView('cards')">Карточки</button>
   <button mat-button [class.active]="viewMode==='table'" (click)="setView('table')">Таблица</button>
@@ -47,9 +48,13 @@
         </div>
 
         <div class="price">{{ p.price | number:'1.2-2' }} ₽</div>
-
+        <ng-template #inCartTpl>
+          <button mat-stroked-button color="primary" *ngIf="isInCart(p.id); else inCartTpl" (click)="goToCart()">
+            Перейти в корзину 
+          </button>
+        </ng-template>
         <mat-card-actions class="actions">
-          <button mat-raised-button color="primary" (click)="addToCart(p.id)">
+          <button mat-raised-button color="primary" *ngIf="!isInCart(p.id); else inCartTpl" (click)="addToCart(p.id)">
             В корзину
           </button>
 
@@ -75,15 +80,6 @@
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Цена</th>
           <td mat-cell *matCellDef="let p">{{ p.price | number:'1.2-2' }} ₽</td>
-        </ng-container>
-
-        <ng-container matColumnDef="qty">
-          <th mat-header-cell *matHeaderCellDef>Кол-во</th>
-          <td mat-cell *matCellDef="let p">
-            <button mat-button (click)="decreaseQty(p.id)">−</button>
-            <b>{{ qty[p.id]}}</b>
-            <button mat-button (click)="increaseQty(p.id)">+</button>
-          </td>
         </ng-container>
 
         <ng-container matColumnDef="actions">

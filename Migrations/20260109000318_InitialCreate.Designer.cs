@@ -12,8 +12,8 @@ using ShopBTW.Data;
 namespace ShopBTW.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251111094900_FixModelsV2")]
-    partial class FixModelsV2
+    [Migration("20260109000318_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,9 +44,7 @@ namespace ShopBTW.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId", "IsCheckedOut")
-                        .IsUnique()
-                        .HasFilter("[IsCheckedOut] = 0");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Carts");
                 });
@@ -64,6 +62,10 @@ namespace ShopBTW.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -160,6 +162,8 @@ namespace ShopBTW.Migrations
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("OrderItems");
                 });
 
@@ -191,6 +195,31 @@ namespace ShopBTW.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("ShopBTW.Models.TelegramUserLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TelegramUserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TelegramUserId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramUserLinks");
+                });
+
             modelBuilder.Entity("ShopBTW.Models.Cart", b =>
                 {
                     b.HasOne("ShopBTW.Models.Customer", "Customer")
@@ -210,15 +239,13 @@ namespace ShopBTW.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopBTW.Models.Product", "Product")
+                    b.HasOne("ShopBTW.Models.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cart");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShopBTW.Models.Order", b =>
@@ -238,6 +265,12 @@ namespace ShopBTW.Migrations
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShopBTW.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");

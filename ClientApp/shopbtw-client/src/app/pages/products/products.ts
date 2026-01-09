@@ -21,6 +21,7 @@ import { ProductDto } from '../../core/models/product.models';
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
+
 export class ProductsComponent implements OnInit {
   products: ProductDto[] = [];
   loading = false;
@@ -56,6 +57,7 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
   }
+
   goToLogin(): void {
     this.router.navigate(['/login'], { queryParams: { returnUrl: '/' } });
   }
@@ -87,6 +89,12 @@ export class ProductsComponent implements OnInit {
             if (!this.qty[p.id]) this.qty[p.id] = 1;
           }
           this.cdr.detectChanges();
+          if (this.auth.isLoggedIn()) {
+          this.syncCartFlags();
+        } else {
+          this.inCart = {};
+        }
+
         },
 
         error: (e) => {
@@ -95,6 +103,35 @@ export class ProductsComponent implements OnInit {
         },
       });
   }
+  // productId -> quantity в корзине (если товара нет, ключа нет)
+  
+  inCart: Record<number, number> = {};
+
+  isInCart(productId: number): boolean {
+  return this.inCart[productId] != null;
+}
+  
+  private syncCartFlags(): void {
+  this.cartApi.getCart().subscribe({
+    next: (cart) => {
+      const map: Record<number, number> = {};
+      for (const it of cart.items) {
+        map[it.productId] = it.quantity;
+      }
+      this.inCart = map;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      // если корзину не получили — просто не показываем "в корзине"
+      this.inCart = {};
+      this.cdr.detectChanges();
+    }
+  });
+}
+  goToCart(): void {
+  this.router.navigate(['/cart']);
+}
+
 
   increaseQty(productId: number): void {
     this.qty[productId] = (this.qty[productId] ?? 1) + 1;
@@ -116,6 +153,7 @@ export class ProductsComponent implements OnInit {
     this.cartApi.addItem({ productId, quantity }).subscribe({
       next: () => {
         this.cdr.detectChanges();
+        this.syncCartFlags();
       },
       error: (e) => {
         if (e?.status === 401) {

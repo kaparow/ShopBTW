@@ -6,6 +6,7 @@ namespace ShopBTW.Data
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public DbSet<TelegramUserLink> TelegramUserLinks { get; set; }
 
         // Таблицы (DbSet'ы)
         public DbSet<Product> Products => Set<Product>();
@@ -51,6 +52,12 @@ namespace ShopBTW.Data
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TelegramUserLink>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.HasIndex(x => x.TelegramUserId).IsUnique();
+            }); 
         }
     }
 }

@@ -11,7 +11,7 @@
     <Content Remove="Data\**" />
     <EmbeddedResource Remove="Data\**" />
     <None Remove="Data\**" />
-    <Compile Include="Data\SeedData.cs"/>
+    <Compile Include="Data\SeedData.cs" />
   </ItemGroup>  
 
   <ItemGroup>
@@ -29,6 +29,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="Telegram.Bot" Version="22.8.1" />
   </ItemGroup>
 
   <ItemGroup>

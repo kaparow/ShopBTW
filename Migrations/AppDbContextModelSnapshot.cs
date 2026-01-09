@@ -192,6 +192,31 @@ namespace ShopBTW.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("ShopBTW.Models.TelegramUserLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TelegramUserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TelegramUserId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramUserLinks");
+                });
+
             modelBuilder.Entity("ShopBTW.Models.Cart", b =>
                 {
                     b.HasOne("ShopBTW.Models.Customer", "Customer")

@@ -5,13 +5,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShopBTW.Data;
 using ShopBTW.Services;
+using ShopBTW.Telegram; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<TelegramUpdateHandler>();
+builder.Services.AddHostedService<TelegramBotHostedService>();
 
 builder.Services.AddCors(opt =>
 {
@@ -117,4 +120,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();   // обязательно до UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
+
+app.UseDefaultFiles();  // ищет index.html в wwwroot
+app.UseStaticFiles();   // раздаёт wwwroot
+app.MapFallbackToFile("index.html");
 app.Run();

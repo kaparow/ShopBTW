@@ -7,8 +7,8 @@ import { OrdersComponent } from './pages/orders/orders';
 import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },              // ← главная
-  { path: 'products', component: ProductsComponent },  // ← каталог
+  { path: '', component: HomeComponent },             
+  { path: 'products', component: ProductsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
